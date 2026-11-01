@@ -7,7 +7,7 @@ Tu prépares tes visuels dans Figma à partir de gabarits, tu les importes (ou t
 
 | Catégorie | Produit | Zones d'impression | Options |
 |---|---|---|---|
-| Textile | T-shirt | Devant, Cœur, Dos, Manche | 12 couleurs + couleur libre |
+| Textile | T-shirt | Devant, Cœur, Dos, Manche | 12 couleurs + couleur libre, flottant ou porté, tissu animé |
 | Textile | Sweat à capuche | Devant, Cœur, Dos, Manche | cordons assortis/contrastés |
 | Textile | Polo | Cœur, Dos, Devant droit, Manche | boutons |
 | Textile | Casquette | Face avant, Côté, Arrière | classique / trucker (filet), **broderie 3D** ou impression, visière incurvée/plate, dessous de visière |
@@ -58,8 +58,8 @@ Puis ouvre http://localhost:8000.
 ## Technique
 
 - [Three.js](https://threejs.org) r187, copié dans `vendor/three` (aucune dépendance externe à l'exécution, à part la police Inter).
-- Tous les modèles 3D sont **générés par le code** (pas de fichiers 3D à télécharger) :
-  - vêtements : silhouette 2D « gonflée » en volume façon *ghost mannequin*, avec ouvertures (col, manches, bas) qui laissent voir l'intérieur, plis, coutures et maille procédurales ;
+- **T-shirt, sweat, polo et tote bag** viennent d'une vraie **simulation de tissu** (Blender) : patrons cousus, drapés par la gravité sur un mannequin MakeHuman (CC0), puis soufflés par du vent. Les poses sont enregistrées dans `assets/models/*.glb` (morph targets) et rejouées en boucle dans le navigateur. Option « Porté » sur buste de vitrine. Scripts de génération dans `tools/blender/`.
+- Les autres objets sont **générés par le code** :
   - objets de révolution (mug, gourde, stylo, bouchon) par profils lissés ;
   - stickers et pin's : contour extrait de la transparence de l'image (distance euclidienne + marching squares) puis extrudé ;
   - casquette : surface paramétrique 6 panneaux, logo projeté (décalcomanie) avec relief de broderie calculé depuis l'image.

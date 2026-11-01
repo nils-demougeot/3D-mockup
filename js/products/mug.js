@@ -16,7 +16,7 @@ const INNER = [
 
 // Dimensions (cm) par modèle
 const MODELS = {
-  ceramic: { R: 4.1, y0: 0.7, y1: 9.15, H: 9.6, wall: 0.32 },
+  ceramic: { R: 4.1, y0: 0.7, y1: 9.3, H: 9.6, wall: 0.32 },
   enamel: { R: 4.2, y0: 0.45, y1: 7.6, H: 8.0, wall: 0.08 },
 };
 
@@ -86,7 +86,8 @@ export default {
       if (name === 'ceramic') {
         const foot = lathe(smoothProfile([[0.001, 0], [3.55, 0], [3.85, 0.08], [4.02, 0.3], [4.09, 0.5], [R, m.y0]], 4), 128);
         group.add(new THREE.Mesh(foot, outer));
-        const top = lathe(smoothProfile([[R, m.y1], [R, 9.42], [4.04, 9.58], [3.9, 9.6], [3.8, 9.48], [3.78, 9.2], [3.78, 1.4], [3.6, 0.9], [3.1, 0.72], [0.001, 0.7]], 4), 128);
+        const rim = [[R, m.y1], [R - 0.01, 9.42], [R - 0.06, 9.53], [R - 0.16, 9.59], [R - 0.26, 9.56], [R - 0.31, 9.46], [R - 0.32, 9.3]];
+        const top = lathe([...smoothProfile(rim, 4), ...smoothProfile([[R - 0.32, 9.2], [R - 0.32, 1.4], [3.6, 0.9], [3.1, 0.72], [0.001, 0.7]], 4)], 128);
         group.add(new THREE.Mesh(top, inner));
         const ctrl = [[3.95, 7.9, 0], [5.6, 8.35, 0], [7.3, 7.7, 0], [7.7, 5.6, 0], [6.9, 3.4, 0], [5.2, 2.5, 0], [3.95, 2.4, 0]];
         const pts = curvePoints(ctrl.map((p) => new THREE.Vector3(...p)), 90);
