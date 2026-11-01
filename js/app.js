@@ -555,12 +555,19 @@ async function doExport(kind) {
       for (const v of views) {
         viewer.frame(v, false);
         if (v.set) { /* les vues qui changent des options ne sont pas rejouées ici */ }
-        shots.push(await viewer.snapshot({ scale: exportScale() * 0.75, background: null }));
+        shots.push(await viewer.snapshot({ scale: exportScale() * 0.8, background: null }));
       }
       viewer.camera.position.copy(saved.p);
       viewer.controls.target.copy(saved.t);
       viewer.controls.update();
-      const tw = shots[0].width, th = shots[0].height, gap = Math.round(tw * 0.02);
+      // recadrage carré centré de chaque vue
+      const side = Math.round(Math.min(shots[0].width, shots[0].height) * 0.84);
+      for (let i = 0; i < shots.length; i++) {
+        const s = shots[i], c = createCanvas(side, side);
+        c.getContext('2d').drawImage(s, (s.width - side) / 2, (s.height - side) / 2, side, side, 0, 0, side, side);
+        shots[i] = c;
+      }
+      const tw = side, th = side, gap = Math.round(tw * 0.03);
       const out = createCanvas(tw * 2 + gap * 3, th * 2 + gap * 3 + Math.round(th * 0.12));
       const ctx = out.getContext('2d');
       paintBg(ctx, out.width, out.height);

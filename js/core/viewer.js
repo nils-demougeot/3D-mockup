@@ -313,6 +313,8 @@ export class Viewer {
     const w = this.container.clientWidth, h = this.container.clientHeight;
     r.setPixelRatio(scale);
     r.setSize(w, h, false);
+    this.controls.update();
+    this._placeLights();
     this.renderer.render(this.scene, this.camera);
     const src = r.domElement;
     const out = document.createElement('canvas');
