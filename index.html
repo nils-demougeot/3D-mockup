@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Merch Studio — mockups 3D gratuits pour ton asso</title>
+  <meta name="description" content="Crée des mockups 3D de qualité pour le merch de ton association, directement dans ton navigateur : t-shirt, hoodie, polo, casquette, tote bag, mug, gourde, stylo, pins, stickers, porte-clé, welcome box." />
+  <meta name="theme-color" content="#f5f3ef" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/three.module.js",
+        "three/addons/": "./vendor/three/addons/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Merch Studio">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a45"/><stop offset="1" stop-color="#7a3cff"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#bg)"/><path d="M11 9.5 7 11.8l1.4 3.2 1.8-.7v8.2h11.6v-8.2l1.8.7 1.4-3.2-4-2.3c-.4 1-1.7 1.8-3.3 1.8h-2.4c-1.6 0-2.9-.8-3.3-1.8Z" fill="#fff"/></svg>
+      </span>
+      <span class="brand-text"><strong>Merch Studio</strong><small>mockups 3D pour ton asso</small></span>
+    </a>
+    <div class="top-actions">
+      <button class="btn ghost" id="btn-help" type="button">
+        <svg viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Zm-2.5-13a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="btn-text">Guide Figma</span>
+      </button>
+      <button class="btn logo-btn" id="btn-logo" type="button" title="Ton logo sera appliqué sur tous les produits">
+        <span class="logo-thumb" id="logo-thumb"></span>
+        <span class="btn-text" id="logo-label">Ajouter mon logo</span>
+      </button>
+      <input type="file" id="logo-input" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden />
+    </div>
+  </header>
+
+  <nav class="rail" id="rail" aria-label="Produits"></nav>
+
+  <main class="layout">
+    <section class="stage" id="stage">
+      <div class="viewer" id="viewer"></div>
+      <div class="stage-head">
+        <div>
+          <span class="eyebrow" id="product-cat">Textile</span>
+          <h1 id="product-title">T-shirt</h1>
+        </div>
+      </div>
+      <div class="stage-tools">
+        <button class="icon-btn" id="btn-rotate" type="button" title="Rotation automatique" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="bg-picker" id="bg-picker" role="radiogroup" aria-label="Arrière-plan"></div>
+      </div>
+      <div class="views" id="views" role="toolbar" aria-label="Vues"></div>
+      <div class="export">
+        <button class="btn primary" id="btn-export" type="button">
+          <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Exporter
+        </button>
+        <div class="export-menu" id="export-menu" hidden>
+          <button type="button" data-export="png">Image PNG HD <small>vue actuelle</small></button>
+          <button type="button" data-export="png-transparent">PNG transparent <small>sans arrière-plan</small></button>
+          <button type="button" data-export="sheet">Planche 4 vues <small>idéale pour présenter</small></button>
+        </div>
+      </div>
+      <div class="drop-hint" id="drop-hint"><div>Dépose ton image pour <strong id="drop-zone-name">la zone</strong></div></div>
+      <div class="loader" id="loader"><span></span></div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    </section>
+
+    <aside class="panel" id="panel">
+      <div class="intro" id="intro">
+        <button class="intro-close" id="intro-close" type="button" aria-label="Fermer">×</button>
+        <strong>Comment ça marche ?</strong>
+        <ol>
+          <li><b>Télécharge le gabarit</b> d'une zone et ouvre-le dans Figma.</li>
+          <li><b>Crée ton visuel</b> dans le frame, masque le calque «&nbsp;GUIDES&nbsp;».</li>
+          <li><b>Importe le PNG</b> ici (ou copie-colle directement depuis Figma avec <kbd>⇧</kbd><kbd>⌘</kbd><kbd>C</kbd> puis <kbd>⌘</kbd><kbd>V</kbd>).</li>
+        </ol>
+      </div>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>Visuels</h2>
+          <span class="hint">Clique sur une zone puis colle (<kbd>⌘</kbd><kbd>V</kbd>)</span>
+        </div>
+        <div class="zones" id="zones"></div>
+      </section>
+
+      <section class="section" id="color-section">
+        <div class="section-head"><h2 id="color-title">Couleur</h2><span class="hint" id="color-name"></span></div>
+        <div class="swatches" id="swatches"></div>
+      </section>
+
+      <section class="section" id="options-section">
+        <div class="section-head"><h2>Options</h2></div>
+        <div class="options" id="options"></div>
+      </section>
+
+      <footer class="panel-foot">
+        <span>100% gratuit · tout reste dans ton navigateur</span>
+        <button class="link" id="btn-reset" type="button">Réinitialiser ce produit</button>
+      </footer>
+    </aside>
+  </main>
+
+  <dialog class="modal" id="help">
+    <form method="dialog" class="modal-inner">
+      <button class="modal-close" value="close" aria-label="Fermer">×</button>
+      <h2>Créer ses visuels dans Figma</h2>
+      <p class="lead">Chaque produit a une ou plusieurs <b>zones d'impression</b>. Pour chaque zone, un gabarit aux bonnes proportions t'attend.</p>
+      <div class="steps">
+        <div class="step"><span>1</span><div><b>Télécharge le gabarit SVG</b><p>Bouton «&nbsp;Gabarit&nbsp;» sur la zone voulue. Glisse le fichier dans Figma : il devient un frame aux dimensions exactes (en px, résolution d'impression indiquée).</p></div></div>
+        <div class="step"><span>2</span><div><b>Dessine dans le frame</b><p>Place ton logo et tes textes dans le groupe «&nbsp;TON DESIGN ICI&nbsp;». Reste dans le cadre pointillé (marge de sécurité). Masque le groupe «&nbsp;GUIDES&nbsp;» avant d'exporter (l'œil dans le panneau des calques).</p></div></div>
+        <div class="step"><span>3</span><div><b>Exporte et importe</b><p>Exporte le frame en <b>PNG</b> (fond transparent si le frame n'a pas de remplissage), puis glisse-le sur la zone. Encore plus rapide : sélectionne le frame, <kbd>⇧</kbd><kbd>⌘</kbd><kbd>C</kbd> (<i>Copy as PNG</i>), clique sur la zone ici et <kbd>⌘</kbd><kbd>V</kbd>.</p></div></div>
+        <div class="step"><span>4</span><div><b>Ajuste et exporte ton mockup</b><p>Déplace le visuel en le glissant sur la vignette, règle la taille, choisis couleurs et finitions, puis «&nbsp;Exporter&nbsp;» en PNG HD ou en planche 4 vues.</p></div></div>
+      </div>
+      <div class="tips">
+        <h3>Bons réflexes</h3>
+        <ul>
+          <li><b>Stickers & pin's :</b> exporte avec un fond transparent, la découpe et le contour métal suivent la forme de ton visuel.</li>
+          <li><b>Boîte kraft :</b> le rendu «&nbsp;Multiply&nbsp;» simule une encre posée sur le carton (le blanc devient transparent).</li>
+          <li><b>Logo global :</b> le bouton «&nbsp;Ajouter mon logo&nbsp;» l'applique d'un coup sur la zone principale de tous les produits.</li>
+          <li><b>Netteté :</b> exporte en 1x depuis les gabarits (déjà en haute résolution), ou 2x pour les très petits produits.</li>
+          <li>Ctrl+V fonctionne aussi sous Windows, et <kbd>Maj</kbd>+<kbd>Ctrl</kbd>+<kbd>C</kbd> dans Figma.</li>
+        </ul>
+      </div>
+    </form>
+  </dialog>
+
+  <noscript><p class="noscript">Merch Studio a besoin de JavaScript et de WebGL pour afficher les mockups 3D.</p></noscript>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
