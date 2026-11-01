@@ -163,7 +163,8 @@ function selectProduct(id, { initial = false } = {}) {
   $('#product-cat').textContent = p.category;
   document.title = `${p.name} — Merch Studio`;
   if (!initial || location.hash) history.replaceState(null, '', '#' + p.id);
-  setTimeout(() => {
+  const token = (selectProduct.token = (selectProduct.token || 0) + 1);
+  setTimeout(async () => {
     try {
       if (instance) {
         removeAnimator?.();
@@ -173,6 +174,9 @@ function selectProduct(id, { initial = false } = {}) {
       pstate(p);
       activeZone = p.zones.find((z) => z.main)?.id || p.zones[0].id;
       instance = p.create({ viewer });
+      const inst = instance;
+      if (inst.ready) await inst.ready;
+      if (token !== selectProduct.token || inst !== instance) { inst.dispose?.(); return; }
       removeAnimator = instance.animate ? viewer.addAnimator(instance.animate) : null;
       const ps = pstate();
       const zones = {};
@@ -203,7 +207,7 @@ function renderRail() {
     rail.append(h('button', {
       class: 'chip', type: 'button', 'data-id': p.id, title: p.name,
       onclick: () => { if (p.id !== product?.id) selectProduct(p.id); },
-    }, h('span', { class: 'dot' }), h('span', { html: ICONS[p.id] }), SHORT[p.id] || p.name));
+    }, h('span', { class: 'dot' }), h('span', { class: 'chip-ico', html: ICONS[p.id] }), h('span', { class: 'chip-label' }, SHORT[p.id] || p.name)));
   }
 }
 function updateRail() {
@@ -547,7 +551,7 @@ async function doExport(kind) {
     if (kind === 'png' || kind === 'png-transparent') {
       const c = await viewer.snapshot({ scale: exportScale(), background: kind === 'png' ? paintBg : null });
       download(c, `${name}.png`);
-      toast('Image exportée ✨');
+      toast('Image exportée');
     } else if (kind === 'sheet') {
       const views = product.views.slice(0, 4);
       const saved = { p: viewer.camera.position.clone(), t: viewer.controls.target.clone() };
@@ -583,7 +587,7 @@ async function doExport(kind) {
       ctx.globalAlpha = 0.6;
       ctx.fillText('Mockup réalisé avec Merch Studio', out.width - gap * 2, fy);
       download(out, `${name}-planche.png`);
-      toast('Planche exportée ✨');
+      toast('Planche exportée');
     }
   } finally {
     viewer.controls.autoRotate = rot;

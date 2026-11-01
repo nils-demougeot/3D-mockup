@@ -40,6 +40,7 @@ export class Viewer {
     key.shadow.bias = -0.0004;
     key.shadow.normalBias = 0.03;
     key.shadow.radius = 4;
+    key.shadow.intensity = 0.6;
     scene.add(key, key.target);
     this.key = key;
     const rim = new THREE.DirectionalLight(0xdfe8ff, 0.55);
@@ -142,8 +143,8 @@ export class Viewer {
     this.csPlane.visible = false;
     r.render(this.scene, this.csCamera);
     this.scene.overrideMaterial = null;
-    this._blurShadow(1.2);
-    this._blurShadow(0.5);
+    this._blurShadow(this._shadowBlur ?? 1.2);
+    this._blurShadow((this._shadowBlur ?? 1.2) * 0.45);
     r.setRenderTarget(null);
     r.setClearAlpha(prevClear);
     this.csPlane.visible = true;
@@ -152,7 +153,10 @@ export class Viewer {
     this.scene.environment = prevEnv;
   }
 
-  setShadowOpacity(v) { this.csPlane.material.opacity = v; }
+  setShadowOpacity(v) {
+    this._shadowMul = v / 0.62;
+    this.csPlane.material.opacity = (this._shadowBase ?? 0.62) * this._shadowMul;
+  }
 
   resize() {
     const w = this.container.clientWidth, h = this.container.clientHeight;
@@ -199,15 +203,19 @@ export class Viewer {
     this.radius = radius;
     this.center = center;
     // plan d'ombre de contact
-    const gap = radius * 0.04;
+    const st = this.current.userData.shadow || {};
+    const gap = radius * (st.gap ?? 0.04);
+    this._shadowBlur = st.blur ?? 1.2;
+    this._shadowBase = st.opacity ?? 0.62;
+    this.csPlane.material.opacity = this._shadowBase * (this._shadowMul ?? 1);
     const s = Math.max(size.x, size.z) * 1.9 + radius * 0.6;
-    this.csGroup.position.set(center.x, box.min.y - gap * 0.2, center.z);
+    this.csGroup.position.set(center.x, box.min.y - gap, center.z);
     this.csPlane.scale.set(s, -1, s);
     this.csBlurPlane.scale.set(s, 1, s);
     this.csCamera.left = -s / 2; this.csCamera.right = s / 2;
     this.csCamera.top = s / 2; this.csCamera.bottom = -s / 2;
     this.csCamera.near = 0;
-    this.csCamera.far = Math.max(size.y * 0.55, radius * 0.5);
+    this.csCamera.far = Math.max(size.y * 0.55, radius * 0.5) + gap;
     this.csCamera.updateProjectionMatrix();
     // lumières
     const k = this.key;
